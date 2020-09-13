@@ -5,27 +5,28 @@ import (
 
 	"github.com/pressly/goose"
 )
+
 func init() {
 	goose.AddMigration(upCreateCategories, downCreateCategories)
 }
 
 func upCreateCategories(tx *sql.Tx) error {
 	_, err := tx.Exec(`
-	-- public.categories definition
-
-	-- Drop table
-	
-	-- DROP TABLE public.categories;
-	
-	CREATE TABLE public.categories (
-		id uuid NOT NULL DEFAULT uuid_generate_v4(),
-		created_at timestamptz NULL,
-		updated_at timestamptz NULL,
-		deleted_at timestamptz NULL,
-		name text NULL,
-		CONSTRAINT categories_pkey PRIMARY KEY (id)
+	create table if not exists categories
+	(
+		id uuid default uuid_generate_v4() not null
+			constraint categories_pkey
+				primary key,
+		created_at timestamp with time zone,
+		updated_at timestamp with time zone,
+		deleted_at timestamp with time zone,
+		name text
 	);
-	CREATE INDEX idx_categories_deleted_at ON public.categories USING btree (deleted_at);
+	
+	alter table categories owner to postgres;
+	
+	create index if not exists idx_categories_deleted_at
+		on categories (deleted_at);
 	`)
 	if err != nil {
 		return err
@@ -35,7 +36,7 @@ func upCreateCategories(tx *sql.Tx) error {
 
 func downCreateCategories(tx *sql.Tx) error {
 	_, err := tx.Exec(`
-	DROP TABLE public.categories;
+	drop table if exists categories;
 	`)
 	if err != nil {
 		return err

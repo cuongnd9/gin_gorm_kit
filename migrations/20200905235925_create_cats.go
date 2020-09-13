@@ -13,29 +13,29 @@ func init() {
 
 func upCreateCats(tx *sql.Tx) error {
 	_, err := tx.Exec(`
-	-- public.cats definition
-
-	-- Drop table
-	
-	-- DROP TABLE public.cats;
-	
-	CREATE TABLE public.cats (
-		id uuid NOT NULL DEFAULT uuid_generate_v4(),
-		created_at timestamptz NULL,
-		updated_at timestamptz NULL,
-		deleted_at timestamptz NULL,
-		"name" text NULL,
-		color text NULL,
-		category_id uuid NULL,
-		CONSTRAINT cats_pkey PRIMARY KEY (id)
+	create table if not exists cats
+	(
+		id uuid default uuid_generate_v4() not null
+			constraint cats_pkey
+				primary key,
+		created_at timestamp with time zone,
+		updated_at timestamp with time zone,
+		deleted_at timestamp with time zone,
+		name text,
+		color text,
+		category_id uuid
+			constraint fk_categories_cats
+				references categories
+					on update cascade on delete set null
+			constraint fk_cats_category
+				references categories
+					on update cascade on delete set null
 	);
-	CREATE INDEX idx_cats_deleted_at ON public.cats USING btree (deleted_at);
 	
+	alter table cats owner to postgres;
 	
-	-- public.cats foreign keys
-	
-	ALTER TABLE public.cats ADD CONSTRAINT fk_categories_cats FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET NULL;
-	ALTER TABLE public.cats ADD CONSTRAINT fk_cats_category FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET NULL;
+	create index if not exists idx_cats_deleted_at
+		on cats (deleted_at);
 	`)
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func upCreateCats(tx *sql.Tx) error {
 
 func downCreateCats(tx *sql.Tx) error {
 	_, err := tx.Exec(`
-	DROP TABLE public.cats;
+	drop table if exists cats;
 	`)
 	if err != nil {
 		return err
