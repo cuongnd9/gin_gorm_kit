@@ -2,7 +2,6 @@ linters:
   disable-all: true
   enable:
     - deadcode
-    - dupl
     - errcheck
     - funlen
     - goconst
