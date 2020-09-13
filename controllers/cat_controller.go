@@ -14,11 +14,10 @@ func GetCats(ctx *gin.Context) {
 	var cats []models.Cat
 	err := services.GetCats(&cats)
 	if err != nil {
-		// FIXME: response status + error.
-		ctx.AbortWithStatus(http.StatusNotFound)
+		ctx.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "no cat found!"})
 		return
 	}
-	ctx.JSON(http.StatusOK, cats)
+	ctx.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": cats})
 }
 
 // CreateCat create new cat.
