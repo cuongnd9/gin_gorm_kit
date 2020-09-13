@@ -25,15 +25,18 @@ func CreateCat(ctx *gin.Context) {
 	var cat models.Cat
 	err := ctx.BindJSON(&cat)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "message": "invalid body"})
 		return
 	}
 	err = services.CreateCat(&cat)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"status": http.StatusInternalServerError, "message": "create cat failed"},
+		)
 		return
 	}
-	ctx.JSON(http.StatusCreated, cat)
+	ctx.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "data": cat})
 }
 
 // GetCatByID get cat by id.
@@ -42,10 +45,10 @@ func GetCatByID(ctx *gin.Context) {
 	var cat models.Cat
 	err := services.GetCatByID(&cat, id)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		ctx.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "no cat found"})
 		return
 	}
-	ctx.JSON(http.StatusOK, cat)
+	ctx.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": cat})
 }
 
 // UpdateCat update cat.
@@ -54,17 +57,20 @@ func UpdateCat(ctx *gin.Context) {
 	var cat models.Cat
 	err := services.GetCatByID(&cat, id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, cat)
+		ctx.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "no cat found"})
 		return
 	}
 	err = ctx.BindJSON(&cat)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "message": "invalid body"})
 		return
 	}
 	err = services.UpdateCat(&cat)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"status": http.StatusInternalServerError, "message": "update cat failed"},
+		)
 		return
 	}
 	ctx.JSON(http.StatusOK, cat)
@@ -76,8 +82,11 @@ func DeleteCat(ctx *gin.Context) {
 	id := ctx.Params.ByName("id")
 	err := services.DeleteCat(&cat, id)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		ctx.JSON(
+			http.StatusInternalServerError,
+			gin.H{"status": http.StatusInternalServerError, "message": "delete cat failed"},
+		)
 		return
 	}
-	ctx.JSON(http.StatusOK, map[string]interface{}{"deleted": true})
+	ctx.JSON(http.StatusNoContent, gin.H{"status": http.StatusNoContent, "data": true})
 }
