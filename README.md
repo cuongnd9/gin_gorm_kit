@@ -1,9 +1,9 @@
-# gorm_kit
+# gin_gorm_kit
 
-![golangci-lint status](https://github.com/103cuong/gorm_kit/workflows/golangci-lint/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/103cuong/gorm_kit)](https://goreportcard.com/report/github.com/103cuong/gorm_kit)
+![golangci-lint status](https://github.com/103cuong/gin_gorm_kit/workflows/golangci-lint/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/103cuong/gin_gorm_kit)](https://goreportcard.com/report/github.com/103cuong/gin_gorm_kit)
 
-A simple 🍕 KIT to start a new Go project.
+A simple KIT with gin 💌 gorm
 
 ## installation
 
