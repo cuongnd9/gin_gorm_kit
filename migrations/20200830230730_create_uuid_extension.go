@@ -12,7 +12,7 @@ func init() {
 }
 
 func upCreateUUIDExtension(tx *sql.Tx) error {
-	_, err := tx.Exec(`create extension if not exists uuid-ossp;`)
+	_, err := tx.Exec(`create extension if not exists "uuid-ossp";`)
 	if err != nil {
 		return err
 	}
@@ -20,7 +20,7 @@ func upCreateUUIDExtension(tx *sql.Tx) error {
 }
 
 func downCreateUUIDExtension(tx *sql.Tx) error {
-	_, err := tx.Exec(`drop extension if exists uuid-ossp;`)
+	_, err := tx.Exec(`drop extension if exists "uuid-ossp";`)
 	if err != nil {
 		return err
 	}
